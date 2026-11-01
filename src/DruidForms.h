@@ -6,6 +6,6 @@
 #include <vector>
 
 extern bool DruidFormsEnabled;
-extern std::map<uint8, std::vector<uint32>> DruidFormModels;
+extern std::map<uint8, std::map<uint32, float>> DruidFormModels;
 
 #endif
