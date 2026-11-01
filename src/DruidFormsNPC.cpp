@@ -56,6 +56,7 @@ public:
             return true;
         }
 
+        // Action 0 means they clicked a form category, so we show the models
         if (action == 0)
         {
             uint8 formId = sender;
@@ -64,17 +65,15 @@ public:
 
             if (DruidFormModels.find(formId) != DruidFormModels.end())
             {
-                // Iterate through the new map structure
+                // Iterate through the map structure
                 for (auto const& modelPair : DruidFormModels[formId])
                 {
                     uint32 modelId = modelPair.first;
                     float scale = modelPair.second;
                     
-                    // Show the scale in the menu if it's customized
                     std::string label = "Use Model ID: " + std::to_string(modelId);
                     if (scale != 1.0f)
                     {
-                        // Format the float to 1 decimal place for a cleaner UI
                         char scaleStr[16];
                         snprintf(scaleStr, sizeof(scaleStr), " (Scale: %.1f)", scale);
                         label += scaleStr;
@@ -87,22 +86,37 @@ public:
             return true;
         }
 
+        // Back to main menu
         if (sender == 0 && action == 0)
         {
             OnGossipHello(player, creature);
             return true;
         }
 
+        // They selected a specific model to use
         uint8 formId = sender;
         uint32 modelId = (action == 999999) ? 0 : action;
 
+        // Save to Database
         if (modelId == 0)
             CharacterDatabase.Execute("DELETE FROM character_druid_forms WHERE guid = {} AND form_id = {}", player->GetGUID().GetCounter(), formId);
         else
             CharacterDatabase.Execute("REPLACE INTO character_druid_forms (guid, form_id, model_id) VALUES ({}, {}, {})", player->GetGUID().GetCounter(), formId, modelId);
 
+        // 1. Set the model ID (handled by the core)
         player->SetCustomDruidForm(formId, modelId);
+        
+        // 2. Look up the scale from the module's config map
+        float customScale = 1.0f;
+        if (modelId != 0 && DruidFormModels[formId].count(modelId))
+        {
+            customScale = DruidFormModels[formId][modelId];
+        }
+        
+        // 3. Push the scale to the core
+        player->SetCustomDruidFormScale(formId, customScale);
 
+        // Notify the player
         if (player->GetShapeshiftForm() == formId)
         {
             player->RemoveAurasByType(SPELL_AURA_MOD_SHAPESHIFT);
@@ -118,7 +132,32 @@ public:
     }
 };
 
+class DruidForms_PlayerScript : public PlayerScript
+{
+public:
+    DruidForms_PlayerScript() : PlayerScript("DruidForms_PlayerScript") { }
+
+    void OnLogin(Player* player) override
+    {
+        if (!DruidFormsEnabled) return;
+
+        // The core already loaded the saved Model IDs from the database.
+        // We just need to check the module config for matching scales and apply them.
+        for (auto const& pair : DruidFormModels)
+        {
+            uint8 formId = pair.first;
+            uint32 savedModelId = player->GetCustomDruidForm(formId);
+            
+            if (savedModelId != 0 && pair.second.count(savedModelId))
+            {
+                player->SetCustomDruidFormScale(formId, pair.second.at(savedModelId));
+            }
+        }
+    }
+};
+
 void AddSC_npc_druid_forms()
 {
     new npc_druid_forms();
+    new DruidForms_PlayerScript();
 }
