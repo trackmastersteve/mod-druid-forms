@@ -64,9 +64,23 @@ public:
 
             if (DruidFormModels.find(formId) != DruidFormModels.end())
             {
-                for (uint32 modelId : DruidFormModels[formId])
+                // Iterate through the new map structure
+                for (auto const& modelPair : DruidFormModels[formId])
                 {
-                    AddGossipItemFor(player, GOSSIP_SENDER_MAIN, "Use Model ID: " + std::to_string(modelId), formId, modelId);
+                    uint32 modelId = modelPair.first;
+                    float scale = modelPair.second;
+                    
+                    // Show the scale in the menu if it's customized
+                    std::string label = "Use Model ID: " + std::to_string(modelId);
+                    if (scale != 1.0f)
+                    {
+                        // Format the float to 1 decimal place for a cleaner UI
+                        char scaleStr[16];
+                        snprintf(scaleStr, sizeof(scaleStr), " (Scale: %.1f)", scale);
+                        label += scaleStr;
+                    }
+
+                    AddGossipItemFor(player, GOSSIP_SENDER_MAIN, label, formId, modelId);
                 }
             }
             SendGossipMenuFor(player, player->GetGossipTextId(creature), creature->GetGUID());
