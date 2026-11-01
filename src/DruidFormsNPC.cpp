@@ -40,7 +40,8 @@ public:
             uint8 formId = pair.first;
             if (!pair.second.empty())
             {
-                AddGossipItemFor(player, GOSSIP_ICON_INTERACT, "Customize " + GetFormName(formId), formId, 0);
+                // Updated to modern GOSSIP_OPTION_* macro
+                AddGossipItemFor(player, GOSSIP_OPTION_INTERACT, "Customize " + GetFormName(formId), formId, 0);
             }
         }
         
@@ -62,14 +63,16 @@ public:
         if (action == 0)
         {
             uint8 formId = sender;
-            AddGossipItemFor(player, GOSSIP_ICON_TAXI, "<- Back to Main Menu", 0, 0); 
-            AddGossipItemFor(player, GOSSIP_ICON_INTERACT, "Reset to Default Native Skin", formId, 999999);
+            // Updated to modern GOSSIP_OPTION_* macro
+            AddGossipItemFor(player, GOSSIP_OPTION_TAXI, "<- Back to Main Menu", 0, 0); 
+            AddGossipItemFor(player, GOSSIP_OPTION_INTERACT, "Reset to Default Native Skin", formId, 999999);
 
             if (DruidFormModels.find(formId) != DruidFormModels.end())
             {
                 for (uint32 modelId : DruidFormModels[formId])
                 {
-                    AddGossipItemFor(player, GOSSIP_ICON_INTERACT, "Use Model ID: " + std::to_string(modelId), formId, modelId);
+                    // Updated to modern GOSSIP_OPTION_* macro
+                    AddGossipItemFor(player, GOSSIP_OPTION_INTERACT, "Use Model ID: " + std::to_string(modelId), formId, modelId);
                 }
             }
             SendGossipMenuFor(player, player->GetGossipTextId(creature), creature->GetGUID());
