@@ -1,0 +1,2 @@
+INSERT INTO `creature_template` (`entry`, `modelid1`, `name`, `subname`, `gossip_menu_id`, `minlevel`, `maxlevel`, `faction`, `npcflag`, `speed_walk`, `speed_run`, `scale`, `rank`, `unit_class`, `unit_flags`, `type`, `type_flags`, `lootid`, `pickpocketloot`, `skinloot`, `AIName`, `ScriptName`) VALUES
+(99999, 169, 'Broll Bearmantle', 'Form Customizer', 0, 80, 80, 35, 1, 1, 1.14286, 1, 0, 1, 0, 7, 0, 0, 0, 0, '', 'npc_druid_forms');

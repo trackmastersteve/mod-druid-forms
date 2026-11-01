@@ -1,0 +1,17 @@
+[worldserver]
+#
+#    DruidForms.Enable
+#        Description: Enable or disable the custom Druid Forms module.
+#        Default:     1 - (Enabled)
+#                     0 - (Disabled)
+DruidForms.Enable = 1
+
+#    DruidForms.Models.<FormName>
+#        Description: Comma-separated list of Model Display IDs for the NPC to offer.
+DruidForms.Models.Cat = "29407, 8571"
+DruidForms.Models.Bear = "29411, 29412"
+DruidForms.Models.Moonkin = "20242"
+DruidForms.Models.Tree = "864"
+DruidForms.Models.Travel = "175, 232"
+DruidForms.Models.Aquatic = "2428, 28504"
+DruidForms.Models.Flight = "20074, 20076"
