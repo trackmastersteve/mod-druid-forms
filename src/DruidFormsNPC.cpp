@@ -29,19 +29,16 @@ public:
     {
         if (!DruidFormsEnabled || player->getClass() != CLASS_DRUID)
         {
-            // Updated to modern AC notification method
             player->SendSystemMessage("This feature is currently unavailable.");
             return false;
         }
 
-        // Generate Main Menu based on populated config options
         for (auto const& pair : DruidFormModels)
         {
             uint8 formId = pair.first;
             if (!pair.second.empty())
             {
-                // Updated to modern GOSSIP_OPTION_* macro
-                AddGossipItemFor(player, GOSSIP_OPTION_INTERACT, "Customize " + GetFormName(formId), formId, 0);
+                AddGossipItemFor(player, GOSSIP_SENDER_MAIN, "Customize " + GetFormName(formId), formId, 0);
             }
         }
         
@@ -59,34 +56,29 @@ public:
             return true;
         }
 
-        // Sub-Menu Navigation: If action == 0, the player clicked a form in the main menu.
         if (action == 0)
         {
             uint8 formId = sender;
-            // Updated to modern GOSSIP_OPTION_* macro
-            AddGossipItemFor(player, GOSSIP_OPTION_TAXI, "<- Back to Main Menu", 0, 0); 
-            AddGossipItemFor(player, GOSSIP_OPTION_INTERACT, "Reset to Default Native Skin", formId, 999999);
+            AddGossipItemFor(player, GOSSIP_SENDER_MAIN, "<- Back to Main Menu", 0, 0); 
+            AddGossipItemFor(player, GOSSIP_SENDER_MAIN, "Reset to Default Native Skin", formId, 999999);
 
             if (DruidFormModels.find(formId) != DruidFormModels.end())
             {
                 for (uint32 modelId : DruidFormModels[formId])
                 {
-                    // Updated to modern GOSSIP_OPTION_* macro
-                    AddGossipItemFor(player, GOSSIP_OPTION_INTERACT, "Use Model ID: " + std::to_string(modelId), formId, modelId);
+                    AddGossipItemFor(player, GOSSIP_SENDER_MAIN, "Use Model ID: " + std::to_string(modelId), formId, modelId);
                 }
             }
             SendGossipMenuFor(player, player->GetGossipTextId(creature), creature->GetGUID());
             return true;
         }
 
-        // Back Button selected
         if (sender == 0 && action == 0)
         {
             OnGossipHello(player, creature);
             return true;
         }
 
-        // Model selected: Save and apply
         uint8 formId = sender;
         uint32 modelId = (action == 999999) ? 0 : action;
 
@@ -100,12 +92,10 @@ public:
         if (player->GetShapeshiftForm() == formId)
         {
             player->RemoveAurasByType(SPELL_AURA_MOD_SHAPESHIFT);
-            // Updated to modern AC notification method
             player->SendSystemMessage("Form updated! Shapeshift again to see the changes.");
         }
         else 
         {
-            // Updated to modern AC notification method
             player->SendSystemMessage("Form appearance updated!");
         }
 
