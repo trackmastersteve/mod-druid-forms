@@ -6,9 +6,11 @@
 class player_druid_forms : public PlayerScript
 {
 public:
-    player_druid_forms() : PlayerScript("player_druid_forms") { }
+    // Update 1: explicitly register the PLAYERHOOK_ON_LOGIN event in the constructor
+    player_druid_forms() : PlayerScript("player_druid_forms", { PLAYERHOOK_ON_LOGIN }) { }
 
-    void OnLogin(Player* player) override
+    // Update 2: Rename OnLogin to OnPlayerLogin to match the modern AC hook signature
+    void OnPlayerLogin(Player* player) override
     {
         player->CustomDruidForms.clear();
 
