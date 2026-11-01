@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <cctype>
 
-// Global definitions for the module
 bool DruidFormsEnabled = true;
 std::map<uint8, std::map<uint32, float>> DruidFormModels;
 
@@ -21,13 +20,14 @@ public:
 
         while (std::getline(ss, token, ',')) 
         {
-            // Remove any spaces from the token
+            // Clean whitespace
             token.erase(std::remove_if(token.begin(), token.end(), ::isspace), token.end());
             if (token.empty()) continue;
 
             uint32 modelId = 0;
-            float scale = 1.0f; // Default scale
+            float scale = 1.0f; // Default to normal size
 
+            // Look for the colon to split ID and Scale
             size_t colonPos = token.find(':');
             if (colonPos != std::string::npos) 
             {
@@ -39,6 +39,7 @@ public:
                 modelId = std::stoul(token);
             }
 
+            // Store the scale in our new map structure
             DruidFormModels[formId][modelId] = scale;
         }
     }
