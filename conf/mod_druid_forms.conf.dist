@@ -8,10 +8,13 @@ DruidForms.Enable = 1
 
 #    DruidForms.Models.<FormName>
 #        Description: Comma-separated list of Model Display IDs for the NPC to offer.
-DruidForms.Models.Cat = "29407, 8571"
-DruidForms.Models.Bear = "29411, 29412"
-DruidForms.Models.Moonkin = "20242"
+#        Boss forms scaled down to 40% (By adding :0.4), normal forms left alone
+DruidForms.Models.Cat = "28010,28866,28869,28872,27482,29673"
+DruidForms.Models.Bear = "24555:0.4,31094:0.4,23772,23773,23774,27726"
+DruidForms.Models.DireBear = "24555,31094,23772,23773,23774,27726"
+DruidForms.Models.Moonkin = "26552,26554"
 DruidForms.Models.Tree = "864"
-DruidForms.Models.Travel = "175, 232"
+DruidForms.Models.Travel = "175, 232, 25571, 25572, 25573, 25574"
 DruidForms.Models.Aquatic = "2428, 28504"
-DruidForms.Models.Flight = "20074, 20076"
+DruidForms.Models.Flight = "20074, 20076, 27563"
+DruidForms.Models.SwiftFlight = "20074, 20076, 27563"
