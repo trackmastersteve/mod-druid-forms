@@ -3,58 +3,68 @@
 #include "DruidForms.h"
 #include <sstream>
 #include <algorithm>
+#include <cctype>
 
+// Global definitions for the module
 bool DruidFormsEnabled = true;
-std::map<uint8, std::vector<uint32>> DruidFormModels;
+std::map<uint8, std::map<uint32, float>> DruidFormModels;
 
-class mod_druid_forms_world : public WorldScript
+class DruidForms_WorldScript : public WorldScript
 {
 public:
-    mod_druid_forms_world() : WorldScript("mod_druid_forms_world") { }
+    DruidForms_WorldScript() : WorldScript("DruidForms_WorldScript") { }
 
-    void LoadModelsForForm(uint8 formId, const char* configKey)
+    void ParseModelConfig(uint8 formId, const std::string& configString)
     {
-        std::string configString = sConfigMgr->GetOption<std::string>(configKey, "");
-        if (configString.empty()) return;
-
-        std::stringstream ss(configString);
+        std::istringstream ss(configString);
         std::string token;
-        
-        while (std::getline(ss, token, ','))
+
+        while (std::getline(ss, token, ',')) 
         {
-            // Remove whitespace
+            // Remove any spaces from the token
             token.erase(std::remove_if(token.begin(), token.end(), ::isspace), token.end());
             if (token.empty()) continue;
-            
-            try 
+
+            uint32 modelId = 0;
+            float scale = 1.0f; // Default scale
+
+            size_t colonPos = token.find(':');
+            if (colonPos != std::string::npos) 
             {
-                uint32 modelId = std::stoul(token);
-                DruidFormModels[formId].push_back(modelId);
+                modelId = std::stoul(token.substr(0, colonPos));
+                scale = std::stof(token.substr(colonPos + 1));
             } 
-            catch (...) { /* Ignore invalid non-numeric config entries */ }
+            else 
+            {
+                modelId = std::stoul(token);
+            }
+
+            DruidFormModels[formId][modelId] = scale;
         }
     }
 
-    void OnBeforeConfigLoad(bool /*reload*/) override
+    void OnConfigLoad(bool /*reload*/) override
     {
         DruidFormModels.clear();
+
         DruidFormsEnabled = sConfigMgr->GetOption<bool>("DruidForms.Enable", true);
 
-        if (!DruidFormsEnabled) return;
+        if (!DruidFormsEnabled)
+            return;
 
-        LoadModelsForForm(1, "DruidForms.Models.Cat");         // Cat Form
-        LoadModelsForForm(5, "DruidForms.Models.Bear");        // Bear Form
-        LoadModelsForForm(8, "DruidForms.Models.Bear");        // Dire Bear Form (Shares Bear config)
-        LoadModelsForForm(31, "DruidForms.Models.Moonkin");    // Moonkin Form
-        LoadModelsForForm(2, "DruidForms.Models.Tree");        // Tree of Life Form
-        LoadModelsForForm(3, "DruidForms.Models.Travel");      // Travel Form
-        LoadModelsForForm(4, "DruidForms.Models.Aquatic");     // Aquatic Form
-        LoadModelsForForm(27, "DruidForms.Models.Flight");     // Flight Form
-        LoadModelsForForm(29, "DruidForms.Models.Flight");     // Swift Flight Form (Shares Flight config)
+        ParseModelConfig(1, sConfigMgr->GetOption<std::string>("DruidForms.Models.Cat", ""));
+        ParseModelConfig(5, sConfigMgr->GetOption<std::string>("DruidForms.Models.Bear", ""));
+        ParseModelConfig(8, sConfigMgr->GetOption<std::string>("DruidForms.Models.DireBear", ""));
+        ParseModelConfig(31, sConfigMgr->GetOption<std::string>("DruidForms.Models.Moonkin", ""));
+        ParseModelConfig(2, sConfigMgr->GetOption<std::string>("DruidForms.Models.Tree", ""));
+        ParseModelConfig(3, sConfigMgr->GetOption<std::string>("DruidForms.Models.Travel", ""));
+        ParseModelConfig(4, sConfigMgr->GetOption<std::string>("DruidForms.Models.Aquatic", ""));
+        ParseModelConfig(27, sConfigMgr->GetOption<std::string>("DruidForms.Models.Flight", ""));
+        ParseModelConfig(29, sConfigMgr->GetOption<std::string>("DruidForms.Models.SwiftFlight", ""));
     }
 };
 
-void AddSC_mod_druid_forms_world()
+void AddSC_DruidFormsConfig()
 {
-    new mod_druid_forms_world();
+    new DruidForms_WorldScript();
 }
