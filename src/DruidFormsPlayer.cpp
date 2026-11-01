@@ -6,10 +6,8 @@
 class player_druid_forms : public PlayerScript
 {
 public:
-    // Update 1: explicitly register the PLAYERHOOK_ON_LOGIN event in the constructor
     player_druid_forms() : PlayerScript("player_druid_forms", { PLAYERHOOK_ON_LOGIN }) { }
 
-    // Update 2: Rename OnLogin to OnPlayerLogin to match the modern AC hook signature
     void OnPlayerLogin(Player* player) override
     {
         player->CustomDruidForms.clear();
@@ -23,8 +21,9 @@ public:
             do
             {
                 Field* fields = result->Fetch();
-                uint8 formId = fields[0].GetUInt8();
-                uint32 modelId = fields[1].GetUInt32();
+                // Updated to modern AzerothCore template syntax
+                uint8 formId = fields[0].Get<uint8>();
+                uint32 modelId = fields[1].Get<uint32>();
                 
                 player->SetCustomDruidForm(formId, modelId);
             } while (result->NextRow());
