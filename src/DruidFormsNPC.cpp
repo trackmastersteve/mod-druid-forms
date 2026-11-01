@@ -29,7 +29,8 @@ public:
     {
         if (!DruidFormsEnabled || player->getClass() != CLASS_DRUID)
         {
-            player->GetSession()->SendNotification("This feature is currently unavailable.");
+            // Updated to modern AC notification method
+            player->SendSystemMessage("This feature is currently unavailable.");
             return false;
         }
 
@@ -96,11 +97,13 @@ public:
         if (player->GetShapeshiftForm() == formId)
         {
             player->RemoveAurasByType(SPELL_AURA_MOD_SHAPESHIFT);
-            player->GetSession()->SendNotification("Form updated! Shapeshift again to see the changes.");
+            // Updated to modern AC notification method
+            player->SendSystemMessage("Form updated! Shapeshift again to see the changes.");
         }
         else 
         {
-            player->GetSession()->SendNotification("Form appearance updated!");
+            // Updated to modern AC notification method
+            player->SendSystemMessage("Form appearance updated!");
         }
 
         CloseGossipMenuFor(player);
