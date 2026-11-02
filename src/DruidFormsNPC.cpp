@@ -137,7 +137,7 @@ class DruidForms_PlayerScript : public PlayerScript
 public:
     DruidForms_PlayerScript() : PlayerScript("DruidForms_PlayerScript") { }
 
-    void OnLogin(Player* player, bool /*firstLogin*/) override
+    void OnLogin(Player* player, bool /*firstLogin*/)
     {
         if (!DruidFormsEnabled) return;
 
