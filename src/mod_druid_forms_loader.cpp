@@ -1,10 +1,10 @@
+// Forward declare the AddSC functions from our other CPP files
+void AddSC_DruidFormsConfig();
 void AddSC_npc_druid_forms();
-void AddSC_player_druid_forms();
-void AddSC_mod_druid_forms_world();
 
+// The main loader function called by the AzerothCore engine
 void Addmod_druid_formsScripts()
 {
+    AddSC_DruidFormsConfig();
     AddSC_npc_druid_forms();
-    AddSC_player_druid_forms();
-    AddSC_mod_druid_forms_world();
 }
