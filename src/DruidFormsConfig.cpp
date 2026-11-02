@@ -44,7 +44,7 @@ public:
         }
     }
 
-    void OnConfigLoad(bool /*reload*/) override
+    void OnConfigLoad(bool /*reload*/)
     {
         DruidFormModels.clear();
 
