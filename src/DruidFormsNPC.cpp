@@ -161,16 +161,27 @@ private:
             {
                 Field* fields = result->Fetch();
                 
-                // Use templated getters to ensure cross-branch compatibility
                 uint8 formId = fields[0].Get<uint8>();
                 uint32 modelId = fields[1].Get<uint32>();
 
+                // 1. Save to player memory
                 player->SetCustomDruidForm(formId, modelId);
 
+                // 2. Apply scale to memory if configured
                 if (DruidFormModels.count(formId) && DruidFormModels[formId].count(modelId))
                 {
                     player->SetCustomDruidFormScale(formId, DruidFormModels[formId].at(modelId));
                 }
+
+                // 3. THE FIX: If the player logs in while ALREADY shapeshifted, force the visual update instantly
+                if (player->GetShapeshiftForm() == formId)
+                {
+                    player->SetDisplayId(modelId);
+                    
+                    // Trigger our custom scale override interceptor in Player.h
+                    player->SetObjectScale(1.0f); 
+                }
+
             } while (result->NextRow());
         }
     }
