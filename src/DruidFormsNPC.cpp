@@ -137,8 +137,6 @@ class DruidForms_PlayerScript : public PlayerScript
 public:
     DruidForms_PlayerScript() : PlayerScript("DruidForms_PlayerScript") { }
 
-    // Provide BOTH known signatures without the 'override' keyword.
-    // The core engine will automatically trigger whichever one matches its internal API.
     void OnLogin(Player* player) 
     { 
         LoadDruidForms(player); 
@@ -150,14 +148,11 @@ public:
     }
 
 private:
-    // Centralized loading logic called by either hook
     void LoadDruidForms(Player* player)
     {
-        // Only run this for Druids if the module is enabled
         if (!DruidFormsEnabled || player->getClass() != CLASS_DRUID) 
             return;
 
-        // Query the custom table for this specific player's saved forms
         QueryResult result = CharacterDatabase.Query("SELECT form_id, model_id FROM character_druid_forms WHERE guid = {}", player->GetGUID().GetCounter());
 
         if (result)
@@ -165,13 +160,13 @@ private:
             do
             {
                 Field* fields = result->Fetch();
-                uint8 formId = fields[0].GetUInt8();
-                uint32 modelId = fields[1].GetUInt32();
+                
+                // Use templated getters to ensure cross-branch compatibility
+                uint8 formId = fields[0].Get<uint8>();
+                uint32 modelId = fields[1].Get<uint32>();
 
-                // 1. Push the saved Model ID into the player's memory
                 player->SetCustomDruidForm(formId, modelId);
 
-                // 2. Check the module's config map for a matching scale and apply it
                 if (DruidFormModels.count(formId) && DruidFormModels[formId].count(modelId))
                 {
                     player->SetCustomDruidFormScale(formId, DruidFormModels[formId].at(modelId));
