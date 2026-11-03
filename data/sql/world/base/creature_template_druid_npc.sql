@@ -8,4 +8,4 @@ INSERT INTO `creature_template` (`entry`, `name`, `subname`, `gossip_menu_id`, `
 
 -- Assign the model ID (17351 = Broll Night Elf) and scale (1.0) using the modern table structure
 INSERT INTO `creature_template_model` (`CreatureID`, `Idx`, `CreatureDisplayID`, `DisplayScale`, `Probability`, `VerifiedBuild`) VALUES 
-(99999, 0, 17351, 1.0, 1.0, 0);
+(99999, 0, 17342, 1.0, 1.0, 0);
