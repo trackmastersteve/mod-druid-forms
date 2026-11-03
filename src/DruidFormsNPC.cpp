@@ -142,7 +142,7 @@ public:
         LoadDruidForms(player); 
     }
 
-    void OnLogin(Player* player, bool /*firstLogin*/) 
+    void OnPlayerLogin(Player* player) override
     { 
         LoadDruidForms(player); 
     }
