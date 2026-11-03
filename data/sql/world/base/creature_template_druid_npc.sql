@@ -8,4 +8,4 @@ INSERT INTO `creature_template` (`entry`, `name`, `subname`, `gossip_menu_id`, `
 
 -- Assign the model ID (11906 = Keeper Remulos) 
 INSERT INTO `creature_template_model` (`CreatureID`, `Idx`, `CreatureDisplayID`, `DisplayScale`, `Probability`, `VerifiedBuild`) VALUES 
-(99999, 0, 11906, 1.0, 1.0, 0);
+(99999, 0, 11906, 0.4, 1.0, 0);
