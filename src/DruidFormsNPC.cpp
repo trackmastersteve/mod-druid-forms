@@ -139,19 +139,30 @@ public:
 
     void OnLogin(Player* player, bool /*firstLogin*/)
     {
-        if (!DruidFormsEnabled) return;
+        // Only run this for Druids if the module is enabled
+        if (!DruidFormsEnabled || player->getClass() != CLASS_DRUID) 
+            return;
 
-        // The core already loaded the saved Model IDs from the database.
-        // We just need to check the module config for matching scales and apply them.
-        for (auto const& pair : DruidFormModels)
+        // Query the custom table for this specific player's saved forms
+        QueryResult result = CharacterDatabase.Query("SELECT form_id, model_id FROM character_druid_forms WHERE guid = {}", player->GetGUID().GetCounter());
+
+        if (result)
         {
-            uint8 formId = pair.first;
-            uint32 savedModelId = player->GetCustomDruidForm(formId);
-            
-            if (savedModelId != 0 && pair.second.count(savedModelId))
+            do
             {
-                player->SetCustomDruidFormScale(formId, pair.second.at(savedModelId));
-            }
+                Field* fields = result->Fetch();
+                uint8 formId = fields[0].GetUInt8();
+                uint32 modelId = fields[1].GetUInt32();
+
+                // 1. Push the saved Model ID into the player's memory
+                player->SetCustomDruidForm(formId, modelId);
+
+                // 2. Check the module's config map for a matching scale and apply it
+                if (DruidFormModels.count(formId) && DruidFormModels[formId].count(modelId))
+                {
+                    player->SetCustomDruidFormScale(formId, DruidFormModels[formId].at(modelId));
+                }
+            } while (result->NextRow());
         }
     }
 };
