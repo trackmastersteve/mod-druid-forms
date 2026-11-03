@@ -137,7 +137,21 @@ class DruidForms_PlayerScript : public PlayerScript
 public:
     DruidForms_PlayerScript() : PlayerScript("DruidForms_PlayerScript") { }
 
-    void OnLogin(Player* player, bool /*firstLogin*/) override
+    // Provide BOTH known signatures without the 'override' keyword.
+    // The core engine will automatically trigger whichever one matches its internal API.
+    void OnLogin(Player* player) 
+    { 
+        LoadDruidForms(player); 
+    }
+
+    void OnLogin(Player* player, bool /*firstLogin*/) 
+    { 
+        LoadDruidForms(player); 
+    }
+
+private:
+    // Centralized loading logic called by either hook
+    void LoadDruidForms(Player* player)
     {
         // Only run this for Druids if the module is enabled
         if (!DruidFormsEnabled || player->getClass() != CLASS_DRUID) 
