@@ -16,98 +16,25 @@ Unlike standard morph modules that rely on aura hooks (which cause a visual "fli
 * **Global Toggle:** Can be completely disabled via the config file.
 
 ## Important Note
-Because this module requires modifying the core AzerothCore source code, it **is not** a pure plug-and-play module. You must make two small edits to your core files before compiling.
+Because this module requires a hybrid approach, it **is not** a pure plug-and-play module and requires slight modifications to the core AzerothCore source code. We have provided an automated Python script to safely apply these edits for you before compiling.
 
 ---
 
 ## Installation Guide
 
-### Step 1: Core Modifications
-You need to add a memory map to the `Player` class and a hook into the shapeshift aura effect.
+### Step 1: Download & Apply Core Modifications
+Instead of manually editing C++ files, you can use the included installer script to safely patch the core engine.
 
-**1. Edit `src/server/game/Entities/Player/Player.h`**
-Find `void InitDisplayIds();` inside the `public:` block of `class Player` and add the following right below it:
-```cpp
-    // Custom Druid Forms
-    std::map<uint8, uint32> CustomDruidForms;
-    std::map<uint8, float> CustomDruidFormScales;
-    
-    uint32 GetCustomDruidForm(uint8 formId) const
-    {
-        auto itr = CustomDruidForms.find(formId);
-        if (itr != CustomDruidForms.end())
-            return itr->second;
-        return 0; 
-    }
-
-    void SetCustomDruidForm(uint8 formId, uint32 modelId)
-    {
-        if (modelId == 0)
-            CustomDruidForms.erase(formId);
-        else
-            CustomDruidForms[formId] = modelId;
-    }
-
-    float GetCustomDruidFormScale(uint8 formId) const
-    {
-        auto itr = CustomDruidFormScales.find(formId);
-        if (itr != CustomDruidFormScales.end())
-            return itr->second;
-        return 1.0f; 
-    }
-
-    void SetCustomDruidFormScale(uint8 formId, float scale)
-    {
-        if (scale == 1.0f)
-            CustomDruidFormScales.erase(formId);
-        else
-            CustomDruidFormScales[formId] = scale;
-    }
-
-    // Intercept the core scale calculation
-    void SetObjectScale(float scale) override
-    {
-        // --- DRUID FORMS INJECTION ---
-        if (getClass() == CLASS_DRUID)
-        {
-            uint8 formId = GetShapeshiftForm();
-            if (formId != 0 && GetCustomDruidForm(formId) != 0)
-            {
-                scale *= GetCustomDruidFormScale(formId);
-            }
-        }
-        // -----------------------------
-
-        Unit::SetObjectScale(scale);
-        SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, scale * DEFAULT_WORLD_OBJECT_SIZE);
-        SetFloatValue(UNIT_FIELD_COMBATREACH, scale * DEFAULT_COMBAT_REACH);
-    }
-```
-
-**2. Edit `src/server/game/Spells/Auras/SpellAuraEffects.cpp`**
-Find `void AuraEffect::HandleAuraModShapeshift`. Inside that function, locate the `if (allow)` block. Inject the custom check right before `target->SetDisplayId(modelid);`:
-```cpp
-            if (allow)
-            {
-                // ------- DRUID-FORMS INJECTION ---
-                if (target->IsPlayer() && target->ToPlayer()->getClass() == CLASS_DRUID)
-                {
-                    uint32 customFormModel = target->ToPlayer()->GetCustomDruidForm(form);
-                    if (customFormModel != 0)
-                    {
-                        modelid = customFormModel; // Override the native calculation
-                    }
-                }
-                // ---------------------------------
-
-                target->SetDisplayId(modelid);
-            }
-```
-
-### Step 2: Module Setup
 1. Clone or copy the `mod-druid-forms` directory into your AzerothCore `modules/` folder.
-2. Re-run CMake to generate the new build files and register the module.
-3. Compile the server.
+2. Open a terminal in your **AzerothCore root directory** and run the auto-patcher script:
+   ```bash
+   python3 modules/mod-druid-forms/install_core_mods.py
+   ```
+   *(Note: The script will automatically create backups of the original `Player.h` and `SpellAuraEffects.cpp` files in your home directory before applying the patches).*
+
+### Step 2: Compile the Server
+1. Re-run CMake to generate the new build files and register the module.
+2. Compile your server as you normally would.
 
 ### Step 3: Database Import
 Because the SQL files are located in the `data/sql/` directory, the AzerothCore database auto-assembler will automatically detect and import the tables into your `acore_world` and `acore_characters` databases the next time you build and start the server. No manual SQL execution is required!
