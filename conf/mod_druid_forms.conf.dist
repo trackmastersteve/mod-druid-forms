@@ -1,4 +1,4 @@
-[worldserver]
+worldserver]
 #
 #    DruidForms.Enable
 #        Description: Enable or disable the custom Druid Forms module.
@@ -9,12 +9,12 @@ DruidForms.Enable = 1
 #    DruidForms.Models.<FormName>
 #        Description: Comma-separated list of Model Display IDs for the NPC to offer.
 #        Boss forms scaled down to 40% (By adding :0.4), normal forms left alone
-DruidForms.Models.Cat = "28010,28866,28869,28872,27482,29673"
-DruidForms.Models.Bear = "24555:0.4,31094:0.4,23772,23773,23774,27726"
-DruidForms.Models.DireBear = "24555,31094,23772,23773,23774,27726"
-DruidForms.Models.Moonkin = "26552,26554"
-DruidForms.Models.Tree = "864"
-DruidForms.Models.Travel = "175, 232, 25571, 25572, 25573, 25574"
-DruidForms.Models.Aquatic = "2428, 28504"
-DruidForms.Models.Flight = "20074, 20076, 27563"
-DruidForms.Models.SwiftFlight = "20074, 20076, 27563"
+DruidForms.Models.Cat = "28010:0.4, 28866, 28869, 28872, 27482, 29673:0.4, 16064:0.2, 20025:0.7"
+DruidForms.Models.Bear = "27726, 12818"
+DruidForms.Models.DireBear = "24555:0.4, 31094:0.4, 23772:0.5, 23773:0.5, 23774:0.5, 27726, 26202:0.3, 23724:0.2, 12818:0.4"
+DruidForms.Models.Moonkin = "26552:0.6, 26554:0.6, 23912:0.6, 486, 20173:0.4, 17953, 20683:0.4"
+DruidForms.Models.Tree = "2451, 22120:0.5, 20604, 13672, 13673, 20249:0.2, 12051:0.1, 1461:0.1, 16975:0.1, 2429:0.2, 24961:0.1"
+DruidForms.Models.Travel = "23951:0.6, 25571, 25572, 2161:0.6"
+DruidForms.Models.Aquatic = "2428, 17752, 17752:0.4"
+DruidForms.Models.Flight = "27563:2.0, 22321:0.4, 24630, 4877:0.4, 18383:0.2, 26566"
+DruidForms.Models.SwiftFlight = "27563, 22321:0.4, 24630, 4877, 18383:0.4, 10891, 17772, 19728"
